@@ -1,19 +1,20 @@
 const bcrypt = require('bcrypt');
 const USER = require("../model/users");
+const errorHandler = require('../utils/error');
 
-const signup = async (req, res) => {
+const signup = async (req, res, next) => {
     const { username, email, password } = req.body;
 
     try {
         // Check if any required field is missing or empty
         if (!username || !email || !password || username === '' || email === '' || password === '') {
-            return res.status(400).json({ msg: 'All fields are required' });
+            next(errorHandler(400, 'All fields are required'));
         }
 
         // Check if the email is already registered
         const existingUser = await USER.findOne({ email });
         if (existingUser) {
-            return res.status(400).json({ msg: 'Email already exists' });
+            next(errorHandler(400, 'Email already registered'));
         }
 
         // Hash the password
@@ -33,8 +34,7 @@ const signup = async (req, res) => {
             msg: "User Signup successful"
         });
     } catch (error) {
-        console.error('Error in signup:', error);
-        res.status(500).json({ msg: 'Internal server error' });
+        next(error);
     }
 }
 
