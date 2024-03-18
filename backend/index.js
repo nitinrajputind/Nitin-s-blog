@@ -1,6 +1,7 @@
 const express = require('express');
 const connectDB = require('./config/config');
-const userRoutes = require('./router/userRoutes');
+const userRoutes = require('./router/user.routes');
+const authRoutes = require('./router/auth.routes');
 require('dotenv').config();
 
 
@@ -24,3 +25,4 @@ const startConnection = async ()=>{
 startConnection()
 
 app.use('/api/user', userRoutes)
+app.use('/api/auth', authRoutes)
