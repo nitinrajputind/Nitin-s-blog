@@ -2,12 +2,16 @@ const express = require('express');
 const connectDB = require('./config/config');
 const userRoutes = require('./router/user.routes');
 const authRoutes = require('./router/auth.routes');
+const cors = require('cors');
 require('dotenv').config();
 
 
 const PORT = process.env.PORT || 8080;
 const app = express();
 app.use(express.json());
+app.use(cors({
+    origin : "*"
+}))
 
 // database connection
 const startConnection = async ()=>{
@@ -32,7 +36,7 @@ app.use((err, req , res , next)=>{
     const statusCode = err.statusCode || 500;
     const message = err.message || "Internal Server Error";
     res.status(statusCode).json({
-        sucess : false,
+        success : false,
         statusCode,
         message
     })
