@@ -65,13 +65,51 @@ const signin = async (req, res, next) => {
     });
 
     // to remove the password from the response
-    const { password : pass , ...rest } = validUser._doc;
+    const { password: pass, ...rest } = validUser._doc;
 
     res
       .status(200)
       .cookie("access_token", token, { httpOnly: true })
       .json(rest);
-  } catch (err) {}
+  } catch (err) {
+    next(err);
+  }
 };
 
-module.exports = { signup, signin };
+const googleAuth = async (req, res, next) => {
+  const { name, email, googlePhotoUrl } = req.body;
+  console.log(name , email , googlePhotoUrl);
+  try {
+    const user = await USER.findOne({ email: email });
+    if (user) {
+      const token = jwt.sign({ id: user._id }, process.env.JWT_SECRETKEY);
+      const { password, ...rest } = user._doc;
+      res
+        .status(200)
+        .cookie("access_token", token, { httpOnly: true })
+        .json(rest);
+    } else {
+      const genratedPassword =
+        Math.random().toString(36).slice(-8) +
+        Math.random().toString(36).slice(-8);
+      const hashedPassword = bcrypt.hashSync(genratedPassword, 10);
+      const newUser = new USER({
+        username : name.toLowerCase().split(' ').join('') + Math.random().toString(9).slice(-4),
+        email: email,
+        password: hashedPassword,
+        profilePicture : googlePhotoUrl
+      });
+      await newUser.save();
+      const token = jwt.sign({ id: newUser._id }, process.env.JWT_SECRETKEY);
+      const { password, ...rest } = newUser._doc;
+      res
+        .status(200)
+        .cookie("access_token", token, { httpOnly: true })
+        .json(rest);
+    }
+  } catch (error) {
+    next(error);
+  }
+};
+
+module.exports = { signup, signin, googleAuth };
