@@ -10,6 +10,8 @@ import {
   ref,
   uploadBytesResumable,
 } from "firebase/storage";
+import { UpdateStart, UpdateSucess, UpdateFailure } from '../redux/reducers/user/userSlice';
+import { useDispatch } from "react-redux";
 
 export default function DashProfile() {
   const { currentUser } = useSelector((state) => state.user);
@@ -18,7 +20,9 @@ export default function DashProfile() {
   const [imageFileUploadingProgress, setImageFileUploadingProgress] =
     useState(null);
   const [imageFileUploadError, setImageFileUploadError] = useState(null);
+  const [formData , setFormData] = useState({});
   const filePickerRef = useRef();
+  const dispatch = useDispatch();
   const handleImageChange = (e) => {
     const file = e.target.files[0];
     if (file) {
@@ -68,14 +72,44 @@ export default function DashProfile() {
       () => {
         getDownloadURL(uploadTask.snapshot.ref).then((downloadUrl) => {
           setimageFileUrl(downloadUrl);
+          setFormData({...formData, profilePicture : downloadUrl})
         });
       }
     );
   };
+  const handleChange = (event) => {
+    setFormData({...formData , [event.target.id] : event.target.value});
+  }
+  const handleSubmit = async (event) => {
+    event.preventDefault();
+    if(Object.keys(formData).length === 0){
+      return 
+    }
+    try {
+      dispatch(UpdateStart())
+      const res = await fetch(`/api/user/update/${currentUser._id}`,{
+        method: 'PUT',
+        headers : {
+          "Content-Type": "application/json",
+        },
+        body : JSON.stringify(formData),
+      })
+      const data = await res.json()
+      console.log(data)
+      if(!res.ok){
+        return dispatch(UpdateFailure(data.message))
+      }
+      dispatch(UpdateSucess(data))
+
+    } catch (error) {
+      dispatch(UpdateFailure(error.message))
+    }
+  };
+  console.log(formData);
   return (
     <div className="max-w-lg mx-auto p-3 w-full">
       <h1 className="my-7 text-center font-semibold text-3xl">Profile</h1>
-      <form className="flex flex-col gap-4">
+      <form onSubmit={handleSubmit} className="flex flex-col gap-4">
         <input
           type="file"
           accept="imgage/*"
@@ -126,18 +160,21 @@ export default function DashProfile() {
           id="username"
           placeholder="username"
           defaultValue={currentUser.username}
+          onChange={handleChange}
         />
         <TextInput
           type="text"
           id="email"
           placeholder="abc@gmail.com"
           defaultValue={currentUser.email}
+          onChange={handleChange}
         />
         <TextInput
           type="password"
           id="password"
           placeholder="password"
           autoComplete="true"
+          onChange={handleChange}
         />
         <Button type="submit" gradientDuoTone={"purpleToBlue"} outline>
           Update
