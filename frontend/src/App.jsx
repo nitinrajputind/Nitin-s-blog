@@ -7,7 +7,7 @@ import Dashboard from "./pages/Dashboard";
 import Projects from "./pages/Projects";
 import Header from "./components/Header";
 import FooterComp from "./components/Footer";
-import PrivateRoute from "./components/PrivateRoute";
+import { PrivateRoute, ProtectedRoute } from "./components/PrivateRoute";
 
 export default function App() {
   return (
@@ -15,10 +15,13 @@ export default function App() {
       <BrowserRouter>
         <Header />
         <Routes>
-          <Route path="/" element={<Home />} />
+          <Route path="/" element={<Home />}/>
           <Route path="/about" element={<About />} />
-          <Route path="/sign-in" element={<SignIn />} />
-          <Route path="/sign-up" element={<SignUp />} />
+          {/* For making protected route */}
+          <Route element={<ProtectedRoute />}>
+            <Route path="/sign-in" element={<SignIn />} />
+            <Route path="/sign-up" element={<SignUp />} />
+          </Route>
           {/* For making protected route */}
           <Route element={<PrivateRoute />}>
             <Route path="/dashboard" element={<Dashboard />} />
