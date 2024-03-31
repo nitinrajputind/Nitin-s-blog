@@ -1,5 +1,5 @@
 import { useSelector } from "react-redux";
-import { Alert, Button, TextInput } from "flowbite-react";
+import { Alert, Button, Modal, TextInput } from "flowbite-react";
 import { useEffect, useRef, useState } from "react";
 import { CircularProgressbar } from "react-circular-progressbar";
 import "react-circular-progressbar/dist/styles.css";
@@ -14,18 +14,24 @@ import {
   UpdateStart,
   UpdateSucess,
   UpdateFailure,
+  deleteUserStart,
+  deleteUserSucess,
+  deleteUserFailure,
 } from "../redux/reducers/user/userSlice";
 import { useDispatch } from "react-redux";
+import { HiOutlineExclamationCircle } from "react-icons/hi";
 
 export default function DashProfile() {
-  const { currentUser } = useSelector((state) => state.user);
+  const { currentUser, error} = useSelector((state) => state.user);
   const [imageFile, setImageFile] = useState(null);
   const [imageFileUrl, setimageFileUrl] = useState(null);
-  const [imageFileUploadingProgress, setImageFileUploadingProgress] = useState(null);
+  const [imageFileUploadingProgress, setImageFileUploadingProgress] =
+    useState(null);
   const [imageFileUploadError, setImageFileUploadError] = useState(null);
-  const [ imageFileUploading , setImageFileUploading ] = useState(false);
+  const [imageFileUploading, setImageFileUploading] = useState(false);
   const [UpdateUserSuccess, setUpdateUserSuccess] = useState(null);
-  const [ updateUserError , setUpdateUserError] = useState(null);
+  const [updateUserError, setUpdateUserError] = useState(null);
+  const [showModel, setShowModel] = useState(false);
   const [formData, setFormData] = useState({});
   const filePickerRef = useRef();
   const dispatch = useDispatch();
@@ -40,6 +46,7 @@ export default function DashProfile() {
     if (imageFile) {
       uploadImage();
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [imageFile]);
   const uploadImage = async () => {
     // service firebase.storage {
@@ -94,10 +101,10 @@ export default function DashProfile() {
     setUpdateUserError(null);
     setUpdateUserSuccess(null);
     if (Object.keys(formData).length === 0) {
-      setUpdateUserError('No changes Made');
+      setUpdateUserError("No changes Made");
       return;
     }
-    if(imageFileUploading){
+    if (imageFileUploading) {
       return;
     }
     try {
@@ -110,7 +117,6 @@ export default function DashProfile() {
         body: JSON.stringify(formData),
       });
       const data = await res.json();
-      console.log(data);
       if (!res.ok) {
         dispatch(UpdateFailure(data.message));
         setUpdateUserError(data.message);
@@ -122,7 +128,24 @@ export default function DashProfile() {
       dispatch(UpdateFailure(error.message));
     }
   };
-  console.log(formData);
+  const handleDeleteUser = async () => {
+    setShowModel(false);
+    try {
+      dispatch(deleteUserStart());
+      const res = await fetch(`/api/user/delete/${currentUser._id}`,{
+        method: 'DELETE',
+      });
+      const data = await res.json();
+      if(!res.ok){
+        dispatch(deleteUserFailure(data.message));
+      }
+      else{
+        dispatch(deleteUserSucess());
+      }
+    } catch (error) {
+      dispatch(deleteUserFailure(error.message));
+    }
+  };
   return (
     <div className="max-w-lg mx-auto p-3 w-full">
       <h1 className="my-7 text-center font-semibold text-3xl">Profile</h1>
@@ -198,23 +221,50 @@ export default function DashProfile() {
         </Button>
       </form>
       <div className="text-red-500 flex justify-between mt-5">
-        <span className="cursor-pointer">Account Delete</span>
+        <span onClick={() => setShowModel(true)} className="cursor-pointer">
+          Delete Account
+        </span>
         <span className="cursor-pointer">Sign Out</span>
       </div>
-      {
-        UpdateUserSuccess && (
-          <Alert color={'success'} className="mt-5">
+      {UpdateUserSuccess && (
+        <Alert color={"success"} className="mt-5">
           {UpdateUserSuccess}
-          </Alert>
-        )
-      }
-      {
-        updateUserError && (
-          <Alert color={'failure'} className="mt-5" >
-          { updateUserError }
-          </Alert>
-        )
-      }
+        </Alert>
+      )}
+      {updateUserError && (
+        <Alert color={"failure"} className="mt-5">
+          {updateUserError}
+        </Alert>
+      )}
+      { error && (
+        <Alert color={"failure"} className="mt-5">
+          {error}
+        </Alert>
+      )}
+      <Modal
+        show={showModel}
+        onClose={() => setShowModel(false)}
+        popup
+        size={"md"}
+      >
+        <Modal.Header />
+        <Modal.Body>
+          <div className="text-center">
+            <HiOutlineExclamationCircle className="h-14 w-14 text-gray-400 dark:text-gray-200 mb-4 mx-auto" />
+            <h1 className="mb-5 text-lg text-gray-500 dark:text-gray-400">
+              Are You Sure. You want to delete Your Account{" "}
+            </h1>
+            <div className="flex justify-center gap-4">
+              <Button color={"failure"} onClick={handleDeleteUser}>
+                Yes I am Sure
+              </Button>
+              <Button color={"gray"} onClick={() => setShowModel(false)}>
+                No, Cancel
+              </Button>
+            </div>
+          </div>
+        </Modal.Body>
+      </Modal>
     </div>
   );
 }
