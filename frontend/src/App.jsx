@@ -8,6 +8,8 @@ import Projects from "./pages/Projects";
 import Header from "./components/Header";
 import FooterComp from "./components/Footer";
 import { PrivateRoute, ProtectedRoute } from "./components/PrivateRoute";
+import { AdminPrivateRoute } from "./components/AdminPrivateRoute";
+import CreatePost from "./pages/CreatePost";
 
 export default function App() {
   return (
@@ -17,6 +19,11 @@ export default function App() {
         <Routes>
           <Route path="/" element={<Home />}/>
           <Route path="/about" element={<About />} />
+          {/* Admin Private Routes */}
+          <Route element={<AdminPrivateRoute/>}>
+            <Route path="/create-post" element={<CreatePost/>}/>
+          </Route>
+
           {/* For making protected route */}
           <Route element={<ProtectedRoute />}>
             <Route path="/sign-in" element={<SignIn />} />
@@ -26,6 +33,7 @@ export default function App() {
           <Route element={<PrivateRoute />}>
             <Route path="/dashboard" element={<Dashboard />} />
           </Route>
+
           <Route path="/projects" element={<Projects />} />
         </Routes>
         <FooterComp />
