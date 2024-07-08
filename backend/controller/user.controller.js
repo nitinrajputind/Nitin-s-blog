@@ -1,6 +1,6 @@
 const errorHandler = require("../utils/error");
 const bcrypt = require("bcrypt");
-const USER = require("../model/users");
+const USER = require("../model/users.model");
 
 const test = async (req, res) => {
   res.json({

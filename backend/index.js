@@ -2,6 +2,7 @@ const express = require("express");
 const connectDB = require("./config/config");
 const userRoutes = require("./router/user.routes");
 const authRoutes = require("./router/auth.routes");
+const postRoutes = require("./router/Post.routes");
 const cookieParser = require("cookie-parser");
 const cors = require("cors");
 require("dotenv").config();
@@ -32,6 +33,7 @@ startConnection();
 
 app.use("/api/user", userRoutes);
 app.use("/api/auth", authRoutes);
+app.use("/api/post", postRoutes);
 
 //Middleware to handle the error
 app.use((err, req, res, next) => {
