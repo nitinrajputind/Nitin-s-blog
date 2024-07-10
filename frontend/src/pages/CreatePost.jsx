@@ -11,7 +11,7 @@ import {
 import { app } from "../firebase";
 import { CircularProgressbar } from "react-circular-progressbar";
 import "react-circular-progressbar/dist/styles.css";
-import { useNavigate } from "react-router-dom"
+import { useNavigate } from "react-router-dom";
 
 export default function CreatePost() {
   const [file, setFile] = useState(null);
@@ -72,12 +72,13 @@ export default function CreatePost() {
         body: JSON.stringify(formData),
       });
       const data = await res.json();
-      if (!data.ok) {
+      if (!res.ok) {
         setPublishError(data.message);
         return;
       }
-      if (data.ok) {
+      if (res.ok) {
         setPublishError(null);
+        console.log("Naviagte");
         navigate(`/post/${data.slug}`)
       }
     } catch (error) {
