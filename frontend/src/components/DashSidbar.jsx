@@ -1,7 +1,7 @@
 import { Sidebar } from "flowbite-react";
 import { Link, useLocation } from "react-router-dom";
 import { useEffect, useState } from "react";
-import { HiArrowSmRight, HiDocumentText, HiUser } from "react-icons/hi";
+import { HiArrowSmRight, HiDocumentText, HiOutlineUser, HiOutlineUserGroup, HiUser } from "react-icons/hi";
 import { SignOutSucess } from "../redux/reducers/user/userSlice";
 import { useDispatch, useSelector } from "react-redux";
 
@@ -35,12 +35,12 @@ export default function DashSidbar() {
   return (
     <Sidebar className="w-full md:w-56">
       <Sidebar.Items>
-        <Sidebar.ItemGroup  className="flex flex-col gap-2">
+        <Sidebar.ItemGroup className="flex flex-col gap-2">
           <Link to={"/dashboard?tab=profile"}>
             <Sidebar.Item
               active={tab === "profile"}
               icon={HiUser}
-              label={currentUser? "Admin" : "User"}
+              label={currentUser ? "Admin" : "User"}
               labelColor={"dark"}
               as="div"
             >
@@ -48,15 +48,26 @@ export default function DashSidbar() {
             </Sidebar.Item>
           </Link>
           {currentUser.isAdmin && (
-            <Link to={"/dashboard?tab=posts"}>
-              <Sidebar.Item
-                active={tab === "posts"}
-                icon={HiDocumentText}
-                as="div"
-              >
-                Post
-              </Sidebar.Item>
-            </Link>
+            <>
+              <Link to={"/dashboard?tab=posts"}>
+                <Sidebar.Item
+                  active={tab === "posts"}
+                  icon={HiDocumentText}
+                  as="div"
+                >
+                  Post
+                </Sidebar.Item>
+              </Link>
+              <Link to={"/dashboard?tab=users"}>
+                <Sidebar.Item
+                  active={tab === "users"}
+                  icon={HiOutlineUserGroup}
+                  as="div"
+                >
+                  Users
+                </Sidebar.Item>
+              </Link>
+            </>
           )}
           <Sidebar.Item
             icon={HiArrowSmRight}
