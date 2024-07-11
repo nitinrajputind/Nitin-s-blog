@@ -16,7 +16,6 @@ export default function DashUsers() {
         const res = await fetch(`/api/user/getusers`);
         const data = await res.json();
         if (res.ok) {
-          console.log(data.users);
           setUsers(data.users);
           if (data.users.length < 9) {
             setShowMore(false);
@@ -47,7 +46,23 @@ export default function DashUsers() {
     }
   };
 
-  const handleDeleteUser = async () => {};
+  const handleDeleteUser = async () => {
+    try {
+      const res = await fetch(`/api/user/delete/${userIdToDelete}`, {
+        method: "DELETE",
+      });
+      const data = await res.json();
+      if (res.ok) {
+        console.log(data);
+        setUsers(users.filter((user) => user._id !== userIdToDelete));
+        setShowModal(false);
+      } else {
+        console.log(data.message);
+      }
+    } catch (error) {
+      console.log(error.message);
+    }
+  };
 
   return (
     <div className="table-auto overflow-x-scroll overflow-y-scroll lg:w-full md:mx-auto p-3 scrollbar scrollbar-track-slate-100 scrollbar-thumb-slate-300 dark:scrollbar-track-slate-700 dark:scrollbar-thumb-slate-500">
@@ -82,7 +97,13 @@ export default function DashUsers() {
                         user.username.slice(1)}
                     </Table.Cell>
                     <Table.Cell>{user.email}</Table.Cell>
-                    <Table.Cell>{user.isAdmin ? (<FaCheck className="text-green-500"/>) : (<FaTimes className="text-red-500"/>)}</Table.Cell>
+                    <Table.Cell>
+                      {user.isAdmin ? (
+                        <FaCheck className="text-green-500" />
+                      ) : (
+                        <FaTimes className="text-red-500" />
+                      )}
+                    </Table.Cell>
                     <Table.Cell>
                       <span
                         onClick={() => {
