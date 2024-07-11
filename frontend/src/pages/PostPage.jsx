@@ -2,11 +2,11 @@ import { Button, Spinner } from "flowbite-react";
 import { useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
 import CallToAction from "../components/CallToAction";
+import CommentSection from "../components/CommentSection";
 
 export default function PostPage() {
   const { postSlug } = useParams();
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(false);
   const [post, setPost] = useState(null);
 
   useEffect(() => {
@@ -16,17 +16,14 @@ export default function PostPage() {
         const res = await fetch(`/api/post/getposts?slug=${postSlug}`);
         const data = await res.json();
         if (!res.ok) {
-          setError(true);
           setLoading(false);
           return;
         }
         if (res.ok) {
           setPost(data.posts[0]);
           setLoading(false);
-          setError(false);
         }
       } catch (error) {
-        setError(true);
         setLoading(false);
       }
     };
@@ -65,13 +62,18 @@ export default function PostPage() {
           />
           <div className="flex justify-between p-3 border-b border-slate-500 mx-auto w-full max-w-4xl text-xs ">
             <span>{post && new Date(post.createdAt).toLocaleDateString()}</span>
-            <span className="italic">{post && (post.content.length / 1000).toFixed(0)} mins read</span>
+            <span className="italic">
+              {post && (post.content.length / 1000).toFixed(0)} mins read
+            </span>
           </div>
-          <div  className="p-3 max-w-4xl mx-auto post-content" dangerouslySetInnerHTML={{__html: post&& post.content}}>
-          </div>
+          <div
+            className="p-3 max-w-4xl mx-auto post-content"
+            dangerouslySetInnerHTML={{ __html: post && post.content }}
+          ></div>
           <div className="max-w-4xl mx-auto w-full">
-            <CallToAction/>
+            <CallToAction />
           </div>
+          <CommentSection postId={post._id} />
         </main>
       )}
     </>
