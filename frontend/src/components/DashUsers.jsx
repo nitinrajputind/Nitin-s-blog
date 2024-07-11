@@ -22,7 +22,7 @@ export default function DashUsers() {
           }
         }
       } catch (error) {
-        console.log(error.message);
+        console.log(error);
       }
     };
     if (currentUser.isAdmin) {
