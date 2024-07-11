@@ -5,6 +5,7 @@ const authRoutes = require("./router/auth.routes");
 const postRoutes = require("./router/post.routes");
 const cookieParser = require("cookie-parser");
 const cors = require("cors");
+const commentRoutes = require("./router/comment.routes");
 require("dotenv").config();
 
 const PORT = process.env.PORT || 8080;
@@ -34,6 +35,7 @@ startConnection();
 app.use("/api/user", userRoutes);
 app.use("/api/auth", authRoutes);
 app.use("/api/post", postRoutes);
+app.use("/api/comment", commentRoutes);
 
 //Middleware to handle the error
 app.use((err, req, res, next) => {
