@@ -104,7 +104,6 @@ const getUsers = async (req, res, next) => {
 
     const totalUsers = await USER.countDocuments();
 
-
     const now = new Date();
 
     const oneMonthAgo = new Date(
@@ -122,12 +121,22 @@ const getUsers = async (req, res, next) => {
       totalUsers,
       lastMonthUsers: lastMonthUsers,
     });
-
-
-
   } catch (error) {
     next(error);
   }
 };
 
-module.exports = { test, updateUser, deleteUser, signOut, getUsers };
+const getUser = async (req, res, next) => {
+  try {
+    const user = await USER.findById(req.params.userId);
+    const { password, ...rest } = user._doc;
+    if (!user) {
+      return next(errorHandler(404, "User not found"));
+    }
+    res.status(200).json(rest);
+  } catch (error) {
+    next(error);
+  }
+};
+
+module.exports = { test, updateUser, deleteUser, signOut, getUsers, getUser };
