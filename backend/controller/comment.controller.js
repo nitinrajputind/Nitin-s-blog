@@ -23,4 +23,15 @@ const createComment = async (req, res, next) => {
   }
 };
 
-module.exports = { createComment };
+const getPostsComment = async (req, res, next) => {
+  try {
+    const comments = await COMMENT.find({ postId: req.params.postId }).sort({
+      createAt: -1,
+    });
+    res.status(200).json(comments);
+  } catch (error) {
+    next(error);
+  }
+};
+
+module.exports = { createComment , getPostsComment };
