@@ -3,6 +3,7 @@ const {
   getPostsComment,
   likeComment,
   editComment,
+  deleteComment,
 } = require("../controller/comment.controller");
 const verifyToken = require("../utils/verifyUser");
 
@@ -12,5 +13,6 @@ commentRoutes.post("/create", verifyToken, createComment);
 commentRoutes.get("/getPostComment/:postId", getPostsComment);
 commentRoutes.put("/likeComment/:commentId", verifyToken, likeComment);
 commentRoutes.put("/editComment/:commentId", verifyToken, editComment);
+commentRoutes.delete("/deleteComment/:commentId", verifyToken, deleteComment);
 
 module.exports = commentRoutes;
