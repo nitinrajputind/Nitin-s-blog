@@ -13,6 +13,8 @@ import CreatePost from "./pages/CreatePost";
 import UpdatePost from "./pages/UpdatePost";
 import PostPage from "./pages/PostPage";
 import ScrollToTop from "./components/ScrollToTop";
+import Search from "./pages/Search";
+import { PageNotFound } from "./pages/PageNotFound";
 
 export default function App() {
   return (
@@ -20,9 +22,11 @@ export default function App() {
       <BrowserRouter>
       <ScrollToTop/>
         <Header />
+        <div className="mt-16"></div>
         <Routes>
           <Route path="/" element={<Home />}/>
           <Route path="/about" element={<About />} />
+          <Route path='/search' element={<Search />} />
           {/* Admin Private Routes */}
           <Route element={<AdminPrivateRoute/>}>
             <Route path="/create-post" element={<CreatePost/>}/>
@@ -41,6 +45,7 @@ export default function App() {
 
           <Route path="/projects" element={<Projects />} />
           <Route path="/post/:postSlug" element={<PostPage />} />
+          <Route path="*" element={<PageNotFound />} />
         </Routes>
         <FooterComp />
       </BrowserRouter>

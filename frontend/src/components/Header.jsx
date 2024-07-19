@@ -1,33 +1,55 @@
 import { Avatar, Button, Dropdown, Navbar, TextInput } from "flowbite-react";
-import { Link, useLocation } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import { AiOutlineSearch } from "react-icons/ai";
 import { FaMoon, FaSun } from "react-icons/fa";
 import { useDispatch, useSelector } from "react-redux";
 import { toogletheme } from "../redux/reducers/theme/themeSlice";
 import { SignOutSucess } from "../redux/reducers/user/userSlice";
+import { useEffect, useState } from "react";
 
 export default function Header() {
   const path = useLocation().pathname;
+  const location = useLocation();
+  const navigate = useNavigate();
   const dispatch = useDispatch();
   const { theme } = useSelector((state) => state.theme);
   const { currentUser } = useSelector((state) => state.user);
-  const handleSignOut = async ()=>{
+  const [searchTerm, setSearchTerm] = useState("");
+
+  useEffect(() => {
+    const urlParams = new URLSearchParams(location.search);
+    const searchTermFromUrl = urlParams.get("searchTerm");
+    if (searchTermFromUrl) {
+      setSearchTerm(searchTermFromUrl);
+    }
+  }, [location.search]);
+
+  const handleSignOut = async () => {
     try {
-      const res = await fetch('/api/user/signout',{
-        method: 'POST'
-      })
+      const res = await fetch("/api/user/signout", {
+        method: "POST",
+      });
       const data = await res.json();
-      if(!res.ok){
+      if (!res.ok) {
         console.log(data.message);
-      } else{
-        dispatch(SignOutSucess())
+      } else {
+        dispatch(SignOutSucess());
       }
     } catch (error) {
-      console.log(error.message)
+      console.log(error.message);
     }
-  }
+  };
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    const urlParams = new URLSearchParams(location.search);
+    urlParams.set("searchTerm", searchTerm);
+    const searchQuery = urlParams.toString();
+    navigate(`/search?${searchQuery}`);
+  };
+
   return (
-    <Navbar className="border-b-2">
+    <Navbar className="border-b-2 fixed z-50 top-0 w-full">
       <Link
         to={"/"}
         className="self-center whitespace-nowrap text-sm  sm:text-xl font-semibold dark:text-white"
@@ -37,12 +59,14 @@ export default function Header() {
         </span>
         Blog
       </Link>
-      <form action="">
+      <form onSubmit={handleSubmit}>
         <TextInput
           type="text"
           placeholder="search..."
           rightIcon={AiOutlineSearch}
           className="hidden lg:inline"
+          value={searchTerm}
+          onChange={(e) => setSearchTerm(e.target.value)}
         />
       </form>
       <Button className="w-12 h-10 lg:hidden" color={"gray"} pill>
@@ -78,8 +102,8 @@ export default function Header() {
             <Link to={"/dashboard?tab=profile"}>
               <Dropdown.Item>Profile</Dropdown.Item>
             </Link>
-              <Dropdown.Divider />
-              <Dropdown.Item onClick={handleSignOut}>Sign Out</Dropdown.Item>
+            <Dropdown.Divider />
+            <Dropdown.Item onClick={handleSignOut}>Sign Out</Dropdown.Item>
           </Dropdown>
         ) : (
           <Link to={"/sign-in"}>
