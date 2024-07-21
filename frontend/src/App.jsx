@@ -20,17 +20,17 @@ export default function App() {
   return (
     <>
       <BrowserRouter>
-      <ScrollToTop/>
+        <ScrollToTop />
         <Header />
         <div className="mt-16"></div>
         <Routes>
-          <Route path="/" element={<Home />}/>
+          <Route path="/" element={<Home />} />
           <Route path="/about" element={<About />} />
-          <Route path='/search' element={<Search />} />
+          <Route path="/search" element={<Search />} />
           {/* Admin Private Routes */}
-          <Route element={<AdminPrivateRoute/>}>
-            <Route path="/create-post" element={<CreatePost/>}/>
-            <Route path="/update-post/:postId" element={<UpdatePost/>}/>
+          <Route element={<AdminPrivateRoute />}>
+            <Route path="/create-post" element={<CreatePost />} />
+            <Route path="/update-post/:postId" element={<UpdatePost />} />
           </Route>
 
           {/* For making protected route */}

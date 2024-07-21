@@ -19,7 +19,7 @@ export default function CreatePost() {
   const [imageUploadError, setImageUploadError] = useState(null);
   const [formData, setFormData] = useState({});
   const [publishError, setPublishError] = useState(null);
-  const navigate = useNavigate()
+  const navigate = useNavigate();
 
   const handleUploadImage = async () => {
     try {
@@ -79,7 +79,7 @@ export default function CreatePost() {
       if (res.ok) {
         setPublishError(null);
         console.log("Naviagte");
-        navigate(`/post/${data.slug}`)
+        navigate(`/post/${data.slug}`);
       }
     } catch (error) {
       setPublishError("Somthing went wrong, please try again");
@@ -160,9 +160,12 @@ export default function CreatePost() {
         <Button type="submit" gradientDuoTone={"purpleToPink"}>
           Publish
         </Button>
-        {
-          publishError && <Alert className="mt-5" color={"failure"}> {publishError} </Alert>
-        }
+        {publishError && (
+          <Alert className="mt-5" color={"failure"}>
+            {" "}
+            {publishError}{" "}
+          </Alert>
+        )}
       </form>
     </div>
   );

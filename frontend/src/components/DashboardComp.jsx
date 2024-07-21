@@ -183,7 +183,7 @@ export default function DashboardComp() {
             </Button>
           </div>
           <div className="overflow-x-auto">
-            <Table hoverable >
+            <Table hoverable>
               <Table.Head>
                 <Table.HeadCell>Post image</Table.HeadCell>
                 <Table.HeadCell>Post Title</Table.HeadCell>
