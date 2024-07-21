@@ -157,5 +157,5 @@ Comment.propTypes = {
   }),
   onLike: PropTypes.func,
   onEdit: PropTypes.func,
-  onDelte : PropTypes.func,
+  onDelte: PropTypes.func,
 };
