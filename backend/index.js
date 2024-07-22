@@ -7,6 +7,7 @@ const cookieParser = require("cookie-parser");
 const cors = require("cors");
 const commentRoutes = require("./router/comment.routes");
 require("dotenv").config();
+const path = require("path");
 
 const PORT = process.env.PORT || 8080;
 const app = express();
@@ -17,6 +18,8 @@ app.use(
     origin: "*",
   })
 );
+
+const _dirname = path.resolve();
 
 // database connection
 const startConnection = async () => {
@@ -36,6 +39,11 @@ app.use("/api/user", userRoutes);
 app.use("/api/auth", authRoutes);
 app.use("/api/post", postRoutes);
 app.use("/api/comment", commentRoutes);
+
+app.use(express.static(path.join(__dirname, "../frontend/dist")));
+app.get("*", (req, res) => {
+  res.sendFile(path.join(__dirname, "../frontend", "dist", "index.html"));
+});
 
 //Middleware to handle the error
 app.use((err, req, res, next) => {
