@@ -6,7 +6,8 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "node index.js",
-    "dev": "nodemon start index.js"
+    "dev": "nodemon start index.js",
+    "build": "npm install && npm install --prefix ../frontend && npm run build --prefix ../frontend"
   },
   "author": "Nitin Rajput",
   "license": "ISC",
